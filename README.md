@@ -1,5 +1,5 @@
 # Padam
-Partially Adaptive Momentum Estimation (Padam)
+This repository contains our pytorch implementation of Partially Adaptive Momentum Estimation method (Padam).
 
 ## Prerequisites: 
 * Pytorch
