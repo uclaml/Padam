@@ -19,9 +19,12 @@ run run_cnn_test_cifar10.py for experiments on ([Cifar10](https://www.cs.toronto
 
 ## Usage Example:
 * Run experiments on Cifar10:
+```bash
   -  python run_cnn_test_cifar10.py  --lr 0.1 --method "padam" --net "vggnet"  --partial 0.125 --wd 5e-4
+```
 * Run experiments on Cifar100:
+```bash
   -  python run_cnn_test_cifar100.py  --lr 0.1 --method "padam" --net "resnet"  --partial 0.125 --wd 5e-4
-
+```
 ## Note:
 * Adam.py is a copy of the newest offical Pytorch implementation of Adam method, with Amsgrad build-in. 
