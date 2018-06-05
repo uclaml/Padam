@@ -6,7 +6,7 @@ Partially Adaptive Momentum Estimation (Padam)
 * CUDA
 
 ## Usage:
-run run_cnn_test_cifar10.py for experiments on ([Cifar10](https://www.cs.toronto.edu/~kriz/cifar.html) and run_cnn_test_cifar100.py for experiments on ([Cifar100](https://www.cs.toronto.edu/~kriz/cifar.html)
+run run_cnn_test_cifar10.py for experiments on [Cifar10](https://www.cs.toronto.edu/~kriz/cifar.html) and run_cnn_test_cifar100.py for experiments on [Cifar100](https://www.cs.toronto.edu/~kriz/cifar.html)
 
 ## Command Line Arguments:
 * --lr: (start) learning rate 
