@@ -11,7 +11,7 @@ run run_cnn_test_cifar10.py for experiments on ([Cifar10](https://www.cs.toronto
 ## Parameters:
 * --lr: (start) learning rate 
 * --method: optimization method, e.g., sgdm, adam, amsgrad, padam
-* --net: network architecture, e.g. vggnet, resnet, wideresnet
+* --net: network architecture, e.g. [vggnet](https://arxiv.org/abs/1409.1556), [resnet](https://arxiv.org/abs/1512.03385), [wideresnet](https://arxiv.org/abs/1605.07146)
 * --partial: partially adaptive parameter for Padam method
 * --wd: weight decay
 * --Nepoch: number of training epochs
@@ -24,4 +24,4 @@ run run_cnn_test_cifar10.py for experiments on ([Cifar10](https://www.cs.toronto
   -  python run_cnn_test_cifar100.py  --lr 0.1 --method "padam" --net "resnet"  --partial 0.125 --wd 5e-4
 
 ## Note:
-* Adam.py is a copy of the newest offical Pytorch implementation of Adam method, with Amsgrad support. We add it to support earlier version of Pytorch.
+* Adam.py is a copy of the newest offical Pytorch implementation of Adam method, with Amsgrad build-in. 
