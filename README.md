@@ -8,16 +8,16 @@ Partially Adaptive Momentum Estimation (Padam)
 ## Usage:
 run run_cnn_test_cifar10.py for experiments on ([Cifar10](https://www.cs.toronto.edu/~kriz/cifar.html) and run_cnn_test_cifar100.py for experiments on ([Cifar100](https://www.cs.toronto.edu/~kriz/cifar.html)
 
-## Parameters:
+## Command Line Arguments:
 * --lr: (start) learning rate 
-* --method: optimization method, e.g., sgdm, adam, amsgrad, padam
-* --net: network architecture, e.g. [vggnet](https://arxiv.org/abs/1409.1556), [resnet](https://arxiv.org/abs/1512.03385), [wideresnet](https://arxiv.org/abs/1605.07146)
+* --method: optimization method, e.g., "sgdm", "adam", "amsgrad", "padam"
+* --net: network architecture, e.g. ["vggnet"](https://arxiv.org/abs/1409.1556), ["resnet"](https://arxiv.org/abs/1512.03385), ["wideresnet"](https://arxiv.org/abs/1605.07146)
 * --partial: partially adaptive parameter for Padam method
 * --wd: weight decay
 * --Nepoch: number of training epochs
 * --resume: whether resume from previous training process
 
-## Usage Example:
+## Usage Examples:
 * Run experiments on Cifar10:
 ```bash
   -  python run_cnn_test_cifar10.py  --lr 0.1 --method "padam" --net "vggnet"  --partial 0.125 --wd 5e-4
