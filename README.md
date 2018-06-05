@@ -1,14 +1,14 @@
 # Padam
 Partially Adaptive Momentum Estimation (Padam)
 
-Prerequisites: 
+## Prerequisites: 
 * Pytorch
 * CUDA
 
-Usage:
-run run_cnn_test_cifar10.py for experiments on Cifar10 and run_cnn_test_cifar100.py for experiments on Cifar100
+## Usage:
+run run_cnn_test_cifar10.py for experiments on ([Cifar10](https://www.cs.toronto.edu/~kriz/cifar.html) and run_cnn_test_cifar100.py for experiments on ([Cifar100](https://www.cs.toronto.edu/~kriz/cifar.html)
 
-Parameters:
+## Parameters:
 * --lr: (start) learning rate 
 * --method: optimization method, e.g., sgdm, adam, amsgrad, padam
 * --net: network architecture, e.g. vggnet, resnet, wideresnet
@@ -17,11 +17,11 @@ Parameters:
 * --Nepoch: number of training epochs
 * --resume: whether resume from previous training process
 
-Usage Example:
+## Usage Example:
 * Run experiments on Cifar10:
   -  python run_cnn_test_cifar10.py  --lr 0.1 --method "padam" --net "vggnet"  --partial 0.125 --wd 5e-4
 * Run experiments on Cifar100:
   -  python run_cnn_test_cifar100.py  --lr 0.1 --method "padam" --net "resnet"  --partial 0.125 --wd 5e-4
 
-Note:
+## Note:
 * Adam.py is a copy of the newest offical Pytorch implementation of Adam method, with Amsgrad support. We add it to support earlier version of Pytorch.
