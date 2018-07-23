@@ -50,7 +50,6 @@ class Padam(Optimizer):
                 # State initialization
                 if len(state) == 0:
                     state['step'] = 0
-                    state['noise_step'] = 0
                     # Exponential moving average of gradient values
                     state['exp_avg'] = torch.zeros_like(p.data)
                     # Exponential moving average of squared gradient values
@@ -65,10 +64,6 @@ class Padam(Optimizer):
                 beta1, beta2 = group['betas']
 
                 state['step'] += 1
-                if state['noise_step'] % 391 == 0:
-                    state['noise_step'] = 0
-                state['noise_step'] += 1
-       
 
                 if group['weight_decay'] != 0:
                     grad = grad.add(group['weight_decay'], p.data)
