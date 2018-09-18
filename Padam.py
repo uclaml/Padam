@@ -81,7 +81,8 @@ class Padam(Optimizer):
 
                 bias_correction1 = 1 - beta1 ** state['step']
                 bias_correction2 = 1 - beta2 ** state['step']
-                step_size = group['lr'] * math.sqrt(bias_correction2) / bias_correction1
+#                 step_size = group['lr'] * math.sqrt(bias_correction2) / bias_correction1
+                step_size = group['lr'] * (bias_correction2)**partial / bias_correction1
 
                 p.data.addcdiv_(-step_size, exp_avg, denom**(partial*2))
                 
