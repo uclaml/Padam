@@ -1,5 +1,5 @@
 # Padam
-This repository contains our pytorch implementation of Partially Adaptive Momentum Estimation method (Padam) in the paper [Closing the Generalization Gap of Adaptive Gradient Methods in Training Deep Neural Networks](https://arxiv.org/abs/1806.06763).
+This repository contains our pytorch implementation of Partially Adaptive Momentum Estimation method (Padam) in the paper [Closing the Generalization Gap of Adaptive Gradient Methods in Training Deep Neural Networks].
 
 ## Prerequisites: 
 * Pytorch
@@ -26,5 +26,3 @@ Use python to run run_cnn_test_cifar10.py for experiments on [Cifar10](https://w
 ```bash
   -  python run_cnn_test_cifar100.py  --lr 0.1 --method "padam" --net "resnet"  --partial 0.125 --wd 5e-4
 ```
-## Note:
-* Adam.py is a copy of the newest offical Pytorch implementation of Adam method, with Amsgrad build-in. 

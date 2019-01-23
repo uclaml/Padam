@@ -7,6 +7,7 @@ import torch.backends.cudnn as cudnn
 
 import torchvision
 import torchvision.transforms as transforms
+import torchvision.models as models
 
 import os
 import argparse
@@ -23,12 +24,7 @@ from torch.optim.lr_scheduler import CosineAnnealingLR
 import json
 from copy import deepcopy
 
-def dist(x0, xt):
-    norm_dis = 0
-    for p0, pt in zip(x0.parameters(), model.parameters()):
-        norm_dis += (p0.data - pt.data).norm(2)**2
-    norm_dis = np.sqrt(norm_dis)   
-    return norm_dis
+ 
     
 parser = argparse.ArgumentParser(description='PyTorch CIFAR100 Training')
 parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
@@ -37,8 +33,11 @@ parser.add_argument('--method', '-m', help='optimization method')
 parser.add_argument('--net', '-n', help='network archtecture')
 parser.add_argument('--partial', default=1/8, type=float, help='partially adaptive parameter p in Padam')
 parser.add_argument('--wd', default=5e-4, type=float, help='weight decay')
-parser.add_argument('--Nepoch', default=100, type=int, help='number of epoch')
- 
+parser.add_argument('--Nepoch', default=200, type=int, help='number of epoch')
+parser.add_argument('--beta1', default=0.9, type=float, help='beta1')
+parser.add_argument('--beta2', default=0.999, type=float, help='beta2')
+
+
 args = parser.parse_args()
 
 use_cuda = torch.cuda.is_available()
@@ -48,7 +47,6 @@ train_errs = []
 test_errs = []
 train_losses = []
 test_losses = []
-dists = []
 
 # Data
 print('==> Preparing data..')
@@ -91,9 +89,11 @@ else:
 if args.net == 'vggnet':
     from models import vgg
     model = vgg.VGG('VGG16', num_classes = 10)
+#     model = models.vgg16_bn(num_classes=10)
 elif args.net == 'resnet':
     from models import resnet
     model = resnet.ResNet18(num_classes = 10)
+#     model = models.resnet18(num_classes=10)
 elif args.net == 'wideresnet':
     from models import wideresnet
     model = wideresnet.WResNet_cifar10(num_classes = 10, depth=16, multiplier=4)
@@ -106,26 +106,16 @@ if use_cuda:
     model.cuda()
     model = torch.nn.DataParallel(model, device_ids=range(torch.cuda.device_count()))
     cudnn.benchmark = True
-
-x0 = deepcopy(model)
+ 
     
 criterion = nn.CrossEntropyLoss()
 
-if args.method == 'sgdm':
-    optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum= 0.9, weight_decay = args.wd)
-elif args.method == 'adam':
-    import Adam
-    optimizer = Adam.Adam(model.parameters(), lr=args.lr, weight_decay = args.wd)
-elif args.method == 'amsgrad':
-    import Adam
-    optimizer = Adam.Adam(model.parameters(), lr=args.lr, amsgrad = True, weight_decay = args.wd)
-elif args.method == 'padam':
-    import Padam
-    optimizer = Padam.Padam(model.parameters(), lr=args.lr, partial = args.partial, weight_decay = args.wd)
-else:
-    print ('Optimizer undefined!')
+betas = (args.beta1, args.beta2)
+import Padam
+optimizer = Padam.Padam(model.parameters(), lr=args.lr, partial = args.partial, weight_decay = args.wd, betas = betas)
+ 
 
-scheduler = MultiStepLR(optimizer, milestones=[30,60,80], gamma=0.1)
+scheduler = MultiStepLR(optimizer, milestones=[100,150], gamma=0.1)
 
 
 for epoch in range(start_epoch+1, args.Nepoch+1):
@@ -147,19 +137,18 @@ for epoch in range(start_epoch+1, args.Nepoch+1):
             return loss
 
         optimizer.zero_grad()
-        inputs, targets = Variable(inputs), Variable(targets)
         outputs = model(inputs)
         loss = criterion(outputs, targets)
         loss.backward()
         optimizer.step(closure)
 
-        train_loss += loss.data[0]
+        train_loss += loss.item()
         _, predicted = torch.max(outputs.data, 1)
         total += targets.size(0)
-        correct += predicted.eq(targets.data).cpu().sum()
+        correct += predicted.eq(targets.data).cpu().sum().item()
 
         progress_bar(batch_idx, len(trainloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
-            % (train_loss/(batch_idx+1), 100.*correct/total, correct, total))
+            % (train_loss/(batch_idx+1), 100.0/total*(correct), correct, total))
  
     # Compute training error 
     train_loss = 0
@@ -168,17 +157,16 @@ for epoch in range(start_epoch+1, args.Nepoch+1):
     for batch_idx, (inputs, targets) in enumerate(trainloader):
         if use_cuda:
             inputs, targets = inputs.cuda(), targets.cuda()
-        inputs, targets = Variable(inputs, volatile=True), Variable(targets)
         outputs = model(inputs)
         loss = criterion(outputs, targets)
 
-        train_loss += loss.data[0]
+        train_loss += loss.item()
         _, predicted = torch.max(outputs.data, 1)
         total += targets.size(0)
-        correct += predicted.eq(targets.data).cpu().sum()
+        correct += predicted.eq(targets.data).cpu().sum().item()
 
         progress_bar(batch_idx, len(trainloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
-            % (train_loss/(batch_idx+1), 100.*correct/total, correct, total))
+            % (train_loss/(batch_idx+1), 100.0/total*(correct), correct, total))
     train_errs.append(1 - correct/total)
     train_losses.append(train_loss/(batch_idx+1))
 
@@ -190,22 +178,21 @@ for epoch in range(start_epoch+1, args.Nepoch+1):
     for batch_idx, (inputs, targets) in enumerate(testloader):
         if use_cuda:
             inputs, targets = inputs.cuda(), targets.cuda()
-        inputs, targets = Variable(inputs, volatile=True), Variable(targets)
         outputs = model(inputs)
         loss = criterion(outputs, targets)
 
-        test_loss += loss.data[0]
+        test_loss += loss.item()
         _, predicted = torch.max(outputs.data, 1)
         total += targets.size(0)
-        correct += predicted.eq(targets.data).cpu().sum()
+        correct += predicted.eq(targets.data).cpu().sum().item()
 
         progress_bar(batch_idx, len(testloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
-            % (test_loss/(batch_idx+1), 100.*correct/total, correct, total))
+            % (test_loss/(batch_idx+1), 100.0/ total *(correct), correct, total))
     test_errs.append(1 - correct/total)
     test_losses.append(test_loss/(batch_idx+1))
 
     # Save checkpoint
-    acc = 100.*correct/total
+    acc = 100.0/total*(correct)
     if acc > best_acc:
         print('Saving..')
         if not os.path.isdir('checkpoint'):
@@ -221,7 +208,5 @@ for epoch in range(start_epoch+1, args.Nepoch+1):
         torch.save(state, './checkpoint/cnn_cifar10_' + args.method)
         best_acc = acc
         
-    d = dist(x0, model)
-    dists.append(d)
-    print ('Dist: ', d)
  
+     
