@@ -26,3 +26,14 @@ Use python to run run_cnn_test_cifar10.py for experiments on [Cifar10](https://w
 ```bash
   -  python run_cnn_test_cifar100.py  --lr 0.1 --method "padam" --net "resnet"  --partial 0.125 --wd 5e-4
 ```
+## Citation
+Please check our paper for technical details and full results. 
+
+```
+@inproceedings{chen2020closing,
+  title={Closing the Generalization Gap of Adaptive Gradient Methods in Training Deep Neural Networks},
+  author={Chen, Jinghui and Zhou, Dongruo and Tang, Yiqi and Yang, Ziyan and Cao, Yuan and Gu, Quanquan},
+  booktitle={International Joint Conferences on Artificial Intelligence},
+  year={2020}
+}
+```
