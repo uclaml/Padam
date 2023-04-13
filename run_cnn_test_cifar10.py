@@ -151,6 +151,7 @@ for epoch in range(start_epoch+1, args.Nepoch+1):
             % (train_loss/(batch_idx+1), 100.0/total*(correct), correct, total))
  
     # Compute training error 
+    
     train_loss = 0
     correct = 0
     total = 0
